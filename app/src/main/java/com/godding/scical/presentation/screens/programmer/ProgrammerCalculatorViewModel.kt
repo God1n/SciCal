@@ -19,6 +19,9 @@ class ProgrammerCalculatorViewModel : ViewModel() {
     
     private val _octalResult = mutableStateOf("")
     val octalResult: State<String> = _octalResult
+    
+    private val _decimalResult = mutableStateOf("")
+    val decimalResult: State<String> = _decimalResult
 
     private var operand1: String = ""
     private var operand2: String = ""
@@ -175,6 +178,7 @@ class ProgrammerCalculatorViewModel : ViewModel() {
         _binaryResult.value = ""
         _hexResult.value = ""
         _octalResult.value = ""
+        _decimalResult.value = ""
         lastInputWasOperator = false
     }
 
@@ -215,10 +219,12 @@ class ProgrammerCalculatorViewModel : ViewModel() {
             _binaryResult.value = convertFromDecimal(decimalValue, NumberBase.BINARY)
             _hexResult.value = convertFromDecimal(decimalValue, NumberBase.HEXADECIMAL)
             _octalResult.value = convertFromDecimal(decimalValue, NumberBase.OCTAL)
+            _decimalResult.value = convertFromDecimal(decimalValue, NumberBase.DECIMAL)
         } else {
             _binaryResult.value = ""
             _hexResult.value = ""
             _octalResult.value = ""
+            _decimalResult.value = ""
         }
     }
 

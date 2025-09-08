@@ -40,6 +40,7 @@ fun ProgrammerCalculatorScreen(
     val binaryResult by viewModel.binaryResult
     val hexResult by viewModel.hexResult
     val octalResult by viewModel.octalResult
+    val decimalResultState by viewModel.decimalResult
     val currentBase by viewModel.numberBase
     
     Surface(
@@ -68,7 +69,7 @@ fun ProgrammerCalculatorScreen(
                 binaryResult = binaryResult,
                 hexResult = hexResult,
                 octalResult = octalResult,
-                decimalResult = result,
+                decimalResult = decimalResultState.ifEmpty { "0" },
                 currentBase = currentBase,
                 onBaseClick = { base -> viewModel.switchNumberBase(base) }
             )
@@ -84,7 +85,7 @@ fun ProgrammerCalculatorScreen(
                         in "0".."9", "A", "B", "C", "D", "E", "F" -> viewModel.onNumberClick(label)
                         "+", "-", "×", "÷", "AND", "OR", "XOR", "<<", ">>" -> viewModel.onOperatorClick(label)
                         "=" -> viewModel.onEqualsClick()
-                        "C" -> viewModel.onClear()
+                        "CLR" -> viewModel.onClear()
                         "CE" -> viewModel.onClearEntry()
                         "⌫" -> viewModel.onBackspace()
                         "NOT" -> viewModel.onBitwiseOperation(label)
@@ -123,7 +124,7 @@ private fun BaseRepresentationCard(
             BaseRow("HEX", hexResult, currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL) {
                 onBaseClick(ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL)
             }
-            BaseRow("DEC", decimalResult.ifEmpty { "0" }, currentBase == ProgrammerCalculatorViewModel.NumberBase.DECIMAL) {
+            BaseRow("DEC", decimalResult, currentBase == ProgrammerCalculatorViewModel.NumberBase.DECIMAL) {
                 onBaseClick(ProgrammerCalculatorViewModel.NumberBase.DECIMAL)
             }
             BaseRow("OCT", octalResult, currentBase == ProgrammerCalculatorViewModel.NumberBase.OCTAL) {
@@ -184,7 +185,7 @@ private fun ProgrammerButtonGrid(
             ButtonData("OR", ButtonType.Operator),
             ButtonData("XOR", ButtonType.Operator),
             ButtonData("NOT", ButtonType.Special),
-            ButtonData("C", ButtonType.Action)
+            ButtonData("CLR", ButtonType.Action)
         ),
         // Row 2: Shift operations
         listOf(
@@ -196,32 +197,32 @@ private fun ProgrammerButtonGrid(
         ),
         // Row 3: Hex digits A-F and operators
         listOf(
-            ButtonData("A", ButtonType.Number, enabled = currentBase.value >= 16),
-            ButtonData("B", ButtonType.Number, enabled = currentBase.value >= 16),
-            ButtonData("C", ButtonType.Number, enabled = currentBase.value >= 16),
-            ButtonData("D", ButtonType.Number, enabled = currentBase.value >= 16),
+            ButtonData("A", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("B", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("C", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("D", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
             ButtonData("-", ButtonType.Operator)
         ),
         // Row 4: Hex digits E-F and numbers
         listOf(
-            ButtonData("E", ButtonType.Number, enabled = currentBase.value >= 16),
-            ButtonData("F", ButtonType.Number, enabled = currentBase.value >= 16),
-            ButtonData("7", ButtonType.Number, enabled = currentBase.value >= 8),
-            ButtonData("8", ButtonType.Number, enabled = currentBase.value >= 10),
+            ButtonData("E", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("F", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("7", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
+            ButtonData("8", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.DECIMAL || currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
             ButtonData("+", ButtonType.Operator)
         ),
         // Row 5: Numbers
         listOf(
-            ButtonData("9", ButtonType.Number, enabled = currentBase.value >= 10),
-            ButtonData("6", ButtonType.Number, enabled = currentBase.value >= 8),
-            ButtonData("5", ButtonType.Number, enabled = currentBase.value >= 8),
-            ButtonData("4", ButtonType.Number, enabled = currentBase.value >= 8),
+            ButtonData("9", ButtonType.Number, enabled = currentBase == ProgrammerCalculatorViewModel.NumberBase.DECIMAL || currentBase == ProgrammerCalculatorViewModel.NumberBase.HEXADECIMAL),
+            ButtonData("6", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
+            ButtonData("5", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
+            ButtonData("4", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
             ButtonData("=", ButtonType.Special)
         ),
         // Row 6: Numbers
         listOf(
-            ButtonData("3", ButtonType.Number, enabled = currentBase.value >= 8),
-            ButtonData("2", ButtonType.Number, enabled = currentBase.value >= 8),
+            ButtonData("3", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
+            ButtonData("2", ButtonType.Number, enabled = currentBase != ProgrammerCalculatorViewModel.NumberBase.BINARY),
             ButtonData("1", ButtonType.Number),
             ButtonData("0", ButtonType.Number),
             ButtonData("CE", ButtonType.Action)
